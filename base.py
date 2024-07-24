@@ -5,19 +5,7 @@ def hide_word(word):
         string += "X";
     return string;
 
-# def demand_answer2():
-#     user_word = str(input("Tapez votre proposition de réponse : "));
-#     if (len(hiding_word) > len(user_word)):
-#         print("Votre mot est trop petit");
-#         demand_answer();
-#     elif (len(hiding_word) < len(user_word)):
-#         print("Votre mot est trop grand");
-#         demand_answer();
-#     else :
-#         user_word = user_word.lower();
-#         return user_word;
-
-def demand_answer():
+def demand_answer(hiding_word):
     ''''''
     user_word = "";
     while (len(hiding_word) != len(user_word)):
@@ -40,6 +28,7 @@ def standardize_word(word):
     return standart_word;
         
 def correct(word):
+    ''''''
     for letter in word:
         carac = ord(letter);
         if (carac < 97 or carac > 122):
@@ -48,6 +37,7 @@ def correct(word):
     return True;
 
 def compare_word(proposition, word_to_find, hiding_word):
+    ''''''
     hiding_word = list(hiding_word);
     for i in range(len(word_to_find)):
         if (hiding_word[i] == "X" and proposition[i] == word_to_find[i]):
@@ -58,18 +48,45 @@ def compare_word(proposition, word_to_find, hiding_word):
             if (proposition[i] not in wrong_letters):
                 wrong_letters.append(proposition[i]);
     hiding_word = "".join(hiding_word)
-    print("Voici les lettres que vous avez révélé dans le mot :",hiding_word);
-    print("Lettres révélées :", reveal_letters);
-    print("Mauvaises lettres :",wrong_letters);
+    display(hiding_word);
     return hiding_word;
 
-words = ["Maison"];
-word_to_find = words[0];
-hiding_word = hide_word(word_to_find);
-user_word = "";
+def display(string):
+    ''''''
+    gap = len(string);
+    print("+" + "-"*5 + "-"*gap + "-"*5 + "+");
+    print("|" + " "*5 + string + " "*5 + "|");
+    print("+" + "-"*5 + "-"*gap + "-"*5 + "+");
+
+    if (reveal_letters != []):
+        print("Les lettres révélées et utilisées dans le mot sont :\n", reveal_letters);
+    if (wrong_letters != []):
+        print("Les mauvaises lettres que vous avez utilisées sont :\n",wrong_letters);
+
+def end_display():
+    ''''''
+    pass
+
+words = ["maison"];
 reveal_letters = [];
 wrong_letters = [];
 tries = 0;
+
+def start():
+    word_to_find = standardize_word(words[0]);
+    hiding_word = hide_word(word_to_find);
+    user_word = "";
+    display(hiding_word);
+    while (hiding_word != word_to_find):
+        user_word = demand_answer(hiding_word);
+        user_word = standardize_word(user_word);
+        if (correct(user_word) == False):
+            print("Votre proposition de mot est incorrecte.");
+        else : 
+            hiding_word = compare_word(user_word,word_to_find,hiding_word);
+    print("Bravo !");
+    end_display();
+
 
 # print(words_to_find);
 # print(hiding_word);
@@ -78,11 +95,11 @@ tries = 0;
 # user_word = demand_answer();
 # print(user_word);
 
-'''Test de la fonction de comparaison de mot manuel.'''
-print("Voici le mot que vous devez révélé :",hiding_word);
-hiding_word = compare_word("marron","maison","XXXXXX");
-print("Voici le mot que vous devez révélé :",hiding_word);
-hiding_word = compare_word("marbre","maXXon","XXXXXX");
+# '''Test de la fonction de comparaison de mot manuel.'''
+# hiding_word = compare_word("marbre","maison","XXXXXX");
+# hiding_word = compare_word("maison","maXXon","XXXXXX");
 
-#50 min
-#10h40
+start();
+
+#2h 
+#19h
