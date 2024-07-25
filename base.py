@@ -63,19 +63,20 @@ def display(string):
     if (wrong_letters != []):
         print("Les mauvaises lettres que vous avez utilisées sont :\n",wrong_letters);
 
-def end_display():
+def end_display(word, n):
     ''''''
-    pass
-
-words = ["maison"];
-reveal_letters = [];
-wrong_letters = [];
-tries = 0;
+    congrat_txt = "Félicitations ! Vous avez trouvé le mot '"+ word + "'.";
+    tries_txt = "Il vous a fallu " + str(n) + " essaies pour réussir."
+    print("+" + "-"*10 + "-"*len(congrat_txt) + "-"*10 + "+");
+    print("|" + " "*10 + congrat_txt + " "*10 + "|");
+    print("|" + " "*10 + tries_txt + " "*(10+len(congrat_txt)-len(tries_txt)) + "|");
+    print("+" + "-"*10 + "-"*len(congrat_txt) + "-"*10 + "+");
 
 def start():
     word_to_find = standardize_word(words[0]);
     hiding_word = hide_word(word_to_find);
     user_word = "";
+    tries = 0;
     display(hiding_word);
     while (hiding_word != word_to_find):
         user_word = demand_answer(hiding_word);
@@ -83,23 +84,15 @@ def start():
         if (correct(user_word) == False):
             print("Votre proposition de mot est incorrecte.");
         else : 
+            tries += 1;
             hiding_word = compare_word(user_word,word_to_find,hiding_word);
-    print("Bravo !");
-    end_display();
+    end_display(word_to_find,tries);
 
-
-# print(words_to_find);
-# print(hiding_word);
-# print("\n");
-# print(user_word);
-# user_word = demand_answer();
-# print(user_word);
-
-# '''Test de la fonction de comparaison de mot manuel.'''
-# hiding_word = compare_word("marbre","maison","XXXXXX");
-# hiding_word = compare_word("maison","maXXon","XXXXXX");
+words = ["maison"];
+reveal_letters = [];
+wrong_letters = [];
 
 start();
 
-#2h 
-#19h
+#2h10 
+#18h26
