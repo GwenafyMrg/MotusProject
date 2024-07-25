@@ -42,14 +42,23 @@ def correct(word):
 def compare_word(proposition, word_to_find, hiding_word):
     ''''''
     hiding_word = list(hiding_word);
-    for i in range(len(word_to_find)):
-        if (hiding_word[i] == "X" and proposition[i] == word_to_find[i]):
-            hiding_word[i] = proposition[i];
-            if (proposition[i] not in reveal_letters):
-                reveal_letters.append(proposition[i]);
-        if (hiding_word[i] == "X" and proposition[i] != word_to_find[i]):
-            if (proposition[i] not in wrong_letters):
-                wrong_letters.append(proposition[i]);
+    for i in range(1,len(proposition)):
+        letter = proposition[i];
+        #Si la lettre est incorrecte
+        if (letter not in word_to_find and letter == word_to_find[0]):
+            if (letter not in wrong_letters):
+                wrong_letters.append(letter);
+        #Si la lettre est correcte
+        else :
+            #Si la lettre est au bon endroit
+            if (letter == word_to_find[i]):
+                hiding_word[i] = letter;
+                if (letter not in reveal_letters):
+                    reveal_letters.append(letter);
+            #Si la lettre est au mauvaix endroit
+            else :
+                if (letter not in wrong_place):
+                    wrong_place.append(letter);
     hiding_word = "".join(hiding_word)
     display(hiding_word);
     return hiding_word;
@@ -62,9 +71,11 @@ def display(string):
     print("+" + "-"*5 + "-"*gap + "-"*5 + "+");
 
     if (reveal_letters != []):
-        print("Les lettres révélées et utilisées dans le mot sont :\n", reveal_letters);
+        print("Les lettres suivantes sont correctes et à la bonne place :\n", reveal_letters);
+    if (reveal_letters != []):
+        print("Les lettres suivantes sont correctes mais à la mauvaise place :\n", wrong_place);
     if (wrong_letters != []):
-        print("Les mauvaises lettres que vous avez utilisées sont :\n",wrong_letters);
+        print("Les lettres suivantes n'apparaissent pas dans le mot :\n",wrong_letters);
 
 def end_display(word, n):
     ''''''
@@ -76,6 +87,7 @@ def end_display(word, n):
     print("+" + "-"*10 + "-"*len(congrat_txt) + "-"*10 + "+");
 
 def start():
+    ''''''
     word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
     hiding_word = hide_word(word_to_find);
     user_word = "";
@@ -99,9 +111,10 @@ with open('frequence.csv', mode='r', encoding='utf-8') as file:
     for row in reader:
         words.append(row[2]);
 reveal_letters = [];
+wrong_place = [];
 wrong_letters = [];
 
 start();
 
-#2h10 
-#18h26
+#3h
+#19h53
