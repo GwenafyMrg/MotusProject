@@ -1,7 +1,10 @@
+import csv
+import random
+
 def hide_word(word):
     ''''''
-    string = "";
-    for letter in range(len(word)):
+    string = word[0];
+    for letter in range(len(word)-1):
         string += "X";
     return string;
 
@@ -73,7 +76,7 @@ def end_display(word, n):
     print("+" + "-"*10 + "-"*len(congrat_txt) + "-"*10 + "+");
 
 def start():
-    word_to_find = standardize_word(words[0]);
+    word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
     hiding_word = hide_word(word_to_find);
     user_word = "";
     tries = 0;
@@ -88,7 +91,13 @@ def start():
             hiding_word = compare_word(user_word,word_to_find,hiding_word);
     end_display(word_to_find,tries);
 
-words = ["maison"];
+
+words = [];
+with open('frequence.csv', mode='r', encoding='utf-8') as file:
+    reader = csv.reader(file, delimiter=";");
+
+    for row in reader:
+        words.append(row[2]);
 reveal_letters = [];
 wrong_letters = [];
 
