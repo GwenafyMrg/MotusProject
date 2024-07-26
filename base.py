@@ -42,20 +42,29 @@ def correct(word):
 def compare_word(proposition, word_to_find, hiding_word):
     ''''''
     hiding_word = list(hiding_word);
-    for i in range(1,len(proposition)):
+    word_to_find = list(word_to_find);
+    proposition = list(proposition);
+    del(word_to_find[0]);
+    del(proposition[0]);
+    for i in range(len(proposition)):
         letter = proposition[i];
-        #Si la lettre est incorrecte
-        if (letter not in word_to_find and letter == word_to_find[0]):
+        #Si la lettre est incorrecte.
+        if (letter not in word_to_find):
             if (letter not in wrong_letters):
                 wrong_letters.append(letter);
-        #Si la lettre est correcte
+        #Si la lettre est correcte.
         else :
-            #Si la lettre est au bon endroit
-            if (letter == word_to_find[i]):
-                hiding_word[i] = letter;
+            #Si on a trouvé tous les emplacements de cette lettre dans le mot.
+            if (word_to_find.count(letter) == hiding_word.count(letter)):
+                continue
+            #Si la lettre est au bon endroit.
+            elif (letter == word_to_find[i]):
+                hiding_word[i+1] = letter;
                 if (letter not in reveal_letters):
                     reveal_letters.append(letter);
-            #Si la lettre est au mauvaix endroit
+                if (letter in wrong_place):
+                    wrong_place.remove(letter);
+            #Si la lettre est au mauvaix endroit.
             else :
                 if (letter not in wrong_place):
                     wrong_place.append(letter);
@@ -72,7 +81,7 @@ def display(string):
 
     if (reveal_letters != []):
         print("Les lettres suivantes sont correctes et à la bonne place :\n", reveal_letters);
-    if (reveal_letters != []):
+    if (wrong_place != []):
         print("Les lettres suivantes sont correctes mais à la mauvaise place :\n", wrong_place);
     if (wrong_letters != []):
         print("Les lettres suivantes n'apparaissent pas dans le mot :\n",wrong_letters);
@@ -88,7 +97,8 @@ def end_display(word, n):
 
 def start():
     ''''''
-    word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
+    # word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
+    word_to_find = "marrons";
     hiding_word = hide_word(word_to_find);
     user_word = "";
     tries = 0;
