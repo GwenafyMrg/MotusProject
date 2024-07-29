@@ -31,8 +31,8 @@ def demand_answer(hiding_word):
     user_word = "";
     while (len(hiding_word) != len(user_word)):
         #On indique à le nombre de caractère attendu.
-        print("Votre mot doit contenir", len(hiding_word), "lettres.")
-        user_word = str(input("Votre proposition : "));
+        print("Enter word of", len(hiding_word), "letters.")
+        user_word = str(input("Your proposition : "));
     user_word = user_word.lower();
     return user_word;
 
@@ -66,9 +66,22 @@ def correct(word):
     for letter in word:
         carac = ord(letter);
         if (carac < 97 or carac > 122):
-            print("Votre proposition ne doit contenir que des lettres entre a et z...")
+            print("Your word must contain characters between 'a' and 'z' only...")
             return False;
     return True;
+
+def start_display():
+    '''
+    Affiche l'introduction du jeu.
+    Args :
+        None
+    Return :
+        None
+    '''
+    intro = "Welcome in Motus Game, the goal ? Find the hiding word.";
+    print("+" + "-"*5 + "-"*len(intro) + "-"*5 + "+");
+    print("|" + " "*5 + intro + " "*5 + "|");
+    print("+" + "-"*5 + "-"*len(intro) + "-"*5 + "+", end="\n\n");
 
 def display(new_hiding_word):
     '''
@@ -81,14 +94,14 @@ def display(new_hiding_word):
     gap = len(new_hiding_word);
     print("+" + "-"*5 + "-"*gap + "-"*5 + "+");
     print("|" + " "*5 + new_hiding_word + " "*5 + "|");
-    print("+" + "-"*5 + "-"*gap + "-"*5 + "+");
+    print("+" + "-"*5 + "-"*gap + "-"*5 + "+", end="\n\n");
 
     if (reveal_letters != []):
-        print("Les lettres suivantes sont correctes et à la bonne place :\n", reveal_letters);
+        print("This letters are correct and at the good place :\n", reveal_letters);
     if (wrong_place != []):
-        print("Les lettres suivantes sont correctes mais à la mauvaise place :\n", wrong_place);
+        print("This letters are correct but at the wrong place :\n", wrong_place);
     if (wrong_letters != []):
-        print("Les lettres suivantes n'apparaissent pas dans le mot :\n",wrong_letters);
+        print("This letters not appear in the word :\n",wrong_letters);
 
 def end_display(finding_word, tries, result):
     '''
@@ -101,12 +114,12 @@ def end_display(finding_word, tries, result):
         None
     '''
     if (result == True):
-        congrat_txt = "Félicitations ! Vous avez trouvé le mot '"+ finding_word + "'.";
-        tries_txt = "Il vous a fallu " + str(n) + " essaies pour réussir.";
+        congrat_txt = "Congratulations ! You found the word : '"+ finding_word + "'.";
+        tries_txt = "You took " + str(tries) + " tries to success.";
     else:
-        congrat_txt = "Dommage ! Vous n'avez pas trouvé le mot '"+ finding_word + "'.";
+        congrat_txt = "Too bad ! You didn't find the word : '"+ finding_word + "'.";
         tries_txt = "Vous avez proposez trop de mots sans succés.";
-    stats = "Vous avez utilisé " + str(len(wrong_letters)) + " mauvaises lettres.";
+    stats = "You used " + str(len(wrong_letters)) + " wrong letters.";
 
     print("+" + "-"*10 + "-"*len(congrat_txt) + "-"*10 + "+");
     #Afficher le message de félicitations.
@@ -115,7 +128,7 @@ def end_display(finding_word, tries, result):
     print("|" + " "*10 + tries_txt + " "*(len(congrat_txt)-len(tries_txt)+10) + "|");
     #Afficher le nombres de lettres incorrectes.
     print("|" + " "*10 + stats + " "*(len(congrat_txt)-len(stats)+10) + "|");
-    print("+" + "-"*10 + "-"*len(congrat_txt) + "-"*10 + "+");
+    print("+" + "-"*10 + "-"*len(congrat_txt) + "-"*10 + "+", end="\n\n");
 
 def compare_word(proposition, word_to_find, hiding_word):
     '''
@@ -175,33 +188,35 @@ def start():
     Return :
         None
     '''
+    start_display();
+
     # word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
     word_to_find = "marron";
     hiding_word = hide_word(word_to_find);
     user_word = "";
     tries = 0;
 
-    #Demamde si le joueur souhaite une limite d'essaies :
-    response = input("Do you want fix tries limit ? Press 'Y' or 'N' : ").strip().upper();
+    #Demande si le joueur souhaite une limite d'essaies :
+    response = input("* Do you want to set try limit ? Press 'Y' or 'N' : ").strip().upper();
     while play not in ["Y", "N"]:
         print("Invalid input. Please enter 'Y' or 'N'.")
-        response = input("Do you want fix tries limit ? Press 'Y' or 'N' : ").strip().upper();
+        response = input("* Do you want to set try limit ? Press 'Y' or 'N' : ").strip().upper();
     
     if (response == 'N'):
         max_tries = None
     else:
         try :
-            max_tries = int(input("How many tries do you want for this party ? "));
+            max_tries = int(input("* How many tries do you want for this part ? "));
         except ValueError:
-            print("Invalid input. You must enter a number correct... \nThe party will start without tries limit.");
+            print("Invalid input. You must enter a number correct... \nThe part will start without try limit.");
     
-    #Party start
+    #Part start
     display(hiding_word);
     while (hiding_word != word_to_find and tries != max_tries):
         user_word = demand_answer(hiding_word);
         user_word = standardize_word(user_word);
         if (correct(user_word) == False):
-            print("Votre proposition de mot est incorrecte.");
+            print("Your proposition is incorrect.");
         else : 
             tries += 1;
             hiding_word = compare_word(user_word,word_to_find,hiding_word);
@@ -232,12 +247,12 @@ while (play == "Y"):
     wrong_letters = [];
     start();
 
-    play = input("Do you want to play again? Y / N: ").strip().upper()
+    play = input("* Do you want to play again? Y / N: ").strip().upper()
     while play not in ["Y", "N"]:
         print("Invalid input. Please enter 'Y' or 'N'.")
-        play = input("Do you want to play again? Y / N: ").strip().upper()
+        play = input("* Do you want to play again? Y / N: ").strip().upper()
         
-print("You left the game. Goodbye.")
+print("You left the game. Goodbye !")
 
-#Environ 5h35 de projet incluant la réfléxion, le code et la documentation.
-#12h19
+#Environ 5h55 de projet incluant la réfléxion, le code et la documentation.
+#1
