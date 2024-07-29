@@ -96,10 +96,15 @@ def end_display(finding_word, n):
         None
     '''
     congrat_txt = "Félicitations ! Vous avez trouvé le mot '"+ finding_word + "'.";
-    tries_txt = "Il vous a fallu " + str(n) + " essaies pour réussir."
+    tries_txt = "Il vous a fallu " + str(n) + " essaies pour réussir.";
+    stats = "Vous avez utilisé " + str(len(wrong_letters)) + " mauvaises lettres.";
     print("+" + "-"*10 + "-"*len(congrat_txt) + "-"*10 + "+");
+    #Afficher le message de félicitations.
     print("|" + " "*10 + congrat_txt + " "*10 + "|");
-    print("|" + " "*10 + tries_txt + " "*(10+len(congrat_txt)-len(tries_txt)) + "|");
+    #Afficher le nombre d'essais.
+    print("|" + " "*10 + tries_txt + " "*(len(congrat_txt)-len(tries_txt)+10) + "|");
+    #Afficher le nombres de lettres incorrectes.
+    print("|" + " "*10 + stats + " "*(len(congrat_txt)-len(stats)+10) + "|");
     print("+" + "-"*10 + "-"*len(congrat_txt) + "-"*10 + "+");
 
 def compare_word(proposition, word_to_find, hiding_word):
@@ -112,14 +117,16 @@ def compare_word(proposition, word_to_find, hiding_word):
     Return :
         hiding_word(string) --> le mot masqué et actualisé une fois que l'utilisateur a proposé son mot.
     '''
-    #conversion des chaines de caractères en liste afin de faciliter la manipualtion.
+    #conversion des chaines de caractères en liste afin de faciliter la manipulation.
     hiding_word = list(hiding_word);
+    temp_hiding_word = list(hide_word(word_to_find))
     word_to_find = list(word_to_find);
     proposition = list(proposition);
 
     #Suppression des premières lettres puisque la première lettre du mot masqué est visible.
     del(word_to_find[0]);
     del(proposition[0]);
+    del(temp_hiding_word[0]);
 
     for i in range(len(proposition)):
         letter = proposition[i];
@@ -130,7 +137,7 @@ def compare_word(proposition, word_to_find, hiding_word):
         #Si la lettre est correcte (se trouve dans le mot à trouver).
         else :
             #Si on a trouvé tous les emplacements de la lettre dans le mot.
-            if (word_to_find.count(letter) == hiding_word.count(letter)):
+            if (word_to_find.count(letter) == temp_hiding_word.count(letter)):
                 continue
             #Si la lettre est bien placé.
             elif (letter == word_to_find[i]):
@@ -158,7 +165,8 @@ def start():
     Return :
         None
     '''
-    word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
+    # word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
+    word_to_find = "attaquer";
     hiding_word = hide_word(word_to_find);
     user_word = "";
     tries = 0;
@@ -187,5 +195,5 @@ wrong_letters = [];
 #Lancement du jeu
 start();
 
-#Environ 4h15 de projet incluant la réfléxion, le code et la documentation.
+#Environ 4h40 de projet incluant la réfléxion, le code et la documentation.
 #18h36
