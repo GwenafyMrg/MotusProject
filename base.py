@@ -1,13 +1,17 @@
+#------------------------------------Packages------------------------------------------#
+
 import csv
 import random
+
+#------------------------------------Functions------------------------------------------#
 
 def hide_word(word):
     '''
     Fonction permettant de masquer un mot à base d'une suite de caractères 'X'
     Args :
-        word(string) --> le mot que nous souhaitons masquer.
+        word(string)    --> le mot que nous souhaitons masquer.
     Return :
-        string(string) --> un string composé d'une suite de 'X' de même taille que l'argument word.
+        string(string)  --> un string composé d'une suite de 'X' de même taille que l'argument word.
     '''
     #On ne souhaite pas masqué la première lettre du mot pour aider l'utilisateur dans sa recherche.
     string = word[0];
@@ -20,9 +24,9 @@ def demand_answer(hiding_word):
     Demande un mot à l'utilisateur, tant que celui-ci soit de la même taille que le mot masqué.
     Le mot est ensuite passé en minuscule.
     Args :
-        hiding_word(string) --> mot masqué que l'utilisateur doit retrouver.
+        hiding_word(string)     --> mot masqué que l'utilisateur doit retrouver.
     Return : 
-        user_word(string) --> mot proposé par l'utilisateur en minuscule.
+        user_word(string)       --> mot proposé par l'utilisateur en minuscule.
     '''
     user_word = "";
     while (len(hiding_word) != len(user_word)):
@@ -36,9 +40,9 @@ def standardize_word(word):
     '''
     Modifie le mot afin de supprimer les caractères accentués.
     Args :
-        word(string) --> un mot contenant des caractères accentués.
+        word(string)            --> un mot contenant des caractères accentués.
     Return :
-        standart_word(string) --> le mot ne contenant que des lettres non accentuées.
+        standart_word(string)   --> le mot ne contenant que des lettres non accentuées.
     '''
     standart_word = "";
     for letter in word :
@@ -55,9 +59,9 @@ def correct(word):
     '''
     Vérifie que la variable passé en argument ne contient que des lettres minuscules allant de a à z.
     Args :
-        word(string) --> un mot contenant des caractères quelconques.
+        word(string)    --> un mot contenant des caractères quelconques.
     Return :
-        boolean --> True si le mot est composé uniquement de caractère entre a et z. False sinon.
+        boolean         --> True si le mot est composé uniquement de caractère entre a et z. False sinon.
     '''
     for letter in word:
         carac = ord(letter);
@@ -70,7 +74,7 @@ def display(new_hiding_word):
     '''
     Affiche le mot masqué et l'état de chaque lettre utilisé dans la proposition de l'utilisateur.
     Args :
-        new_hiding_word(string) --> le mot masqué.
+        new_hiding_word(string)     --> le mot masqué.
     Return :
         None
     '''
@@ -86,18 +90,24 @@ def display(new_hiding_word):
     if (wrong_letters != []):
         print("Les lettres suivantes n'apparaissent pas dans le mot :\n",wrong_letters);
 
-def end_display(finding_word, n):
+def end_display(finding_word, tries, result):
     '''
     Affichage à la fin de la partie quand l'utilsiteur a découvert le mot à trouver.
     Args :
         finding_word(string) --> le mot découvert.
-        n(int) --> le nombre d'essai qu'il a fallu pour découvrir le mot.
+        n(int)          --> le nombre d'essai qu'il a fallu pour découvrir le mot.
+        resutl(boolean) --> resultat de la partie
     Return :
         None
     '''
-    congrat_txt = "Félicitations ! Vous avez trouvé le mot '"+ finding_word + "'.";
-    tries_txt = "Il vous a fallu " + str(n) + " essaies pour réussir.";
+    if (result == True):
+        congrat_txt = "Félicitations ! Vous avez trouvé le mot '"+ finding_word + "'.";
+        tries_txt = "Il vous a fallu " + str(n) + " essaies pour réussir.";
+    else:
+        congrat_txt = "Dommage ! Vous n'avez pas trouvé le mot '"+ finding_word + "'.";
+        tries_txt = "Vous avez proposez trop de mots sans succés.";
     stats = "Vous avez utilisé " + str(len(wrong_letters)) + " mauvaises lettres.";
+
     print("+" + "-"*10 + "-"*len(congrat_txt) + "-"*10 + "+");
     #Afficher le message de félicitations.
     print("|" + " "*10 + congrat_txt + " "*10 + "|");
@@ -111,11 +121,11 @@ def compare_word(proposition, word_to_find, hiding_word):
     '''
     Compare la proposition de l'utilisateur avec le mot masqué en s'appuyant sur le mot à trouver.
     Args :
-        proposition(string) --> le mot proposé par l'utilsateur.
-        word_to_find(string) --> le mot que l'utilisateur doit trouver.
-        hiding_word(string) --> le mot masqué contenant des 'X' et des lettres révélés par l'utilisateur.
+        proposition(string)     --> le mot proposé par l'utilsateur.
+        word_to_find(string)    --> le mot que l'utilisateur doit trouver.
+        hiding_word(string)     --> le mot masqué contenant des 'X' et des lettres révélés par l'utilisateur.
     Return :
-        hiding_word(string) --> le mot masqué et actualisé une fois que l'utilisateur a proposé son mot.
+        hiding_word(string)     --> le mot masqué et actualisé une fois que l'utilisateur a proposé son mot.
     '''
     #conversion des chaines de caractères en liste afin de faciliter la manipulation.
     hiding_word = list(hiding_word);
@@ -157,7 +167,7 @@ def compare_word(proposition, word_to_find, hiding_word):
 
 def start():
     '''
-    Lance la partie ; Pioche un mot parmi une liste, demande un mot à l'utilisateur en 
+    Demande une limite d'essai pour plus de difficulté, Lance la partie ; Pioche un mot parmi une liste, demande un mot à l'utilisateur en 
     vérifiant sa compatibilité avec le jeu, s'arrête et affiche le message de fin une fois que 
     le mot masqué soit entièrement révélé.
     Args :
@@ -170,8 +180,24 @@ def start():
     hiding_word = hide_word(word_to_find);
     user_word = "";
     tries = 0;
+
+    #Demamde si le joueur souhaite une limite d'essaies :
+    response = input("Do you want fix tries limit ? Press 'Y' or 'N' : ").strip().upper();
+    while play not in ["Y", "N"]:
+        print("Invalid input. Please enter 'Y' or 'N'.")
+        response = input("Do you want fix tries limit ? Press 'Y' or 'N' : ").strip().upper();
+    
+    if (response == 'N'):
+        max_tries = None
+    else:
+        try :
+            max_tries = int(input("How many tries do you want for this party ? "));
+        except ValueError:
+            print("Invalid input. You must enter a number correct... \nThe party will start without tries limit.");
+    
+    #Party start
     display(hiding_word);
-    while (hiding_word != word_to_find):
+    while (hiding_word != word_to_find and tries != max_tries):
         user_word = demand_answer(hiding_word);
         user_word = standardize_word(user_word);
         if (correct(user_word) == False):
@@ -179,7 +205,15 @@ def start():
         else : 
             tries += 1;
             hiding_word = compare_word(user_word,word_to_find,hiding_word);
-    end_display(word_to_find,tries);
+    #Si le mot n'a pas été trouvé et que le nombre d'essaies est atteint.
+    if (hiding_word != word_to_find and tries == max_tries):
+        win = False;
+    #Si le mot a été trouvé sur le dernier essai.
+    else:
+        win = True;
+    end_display(word_to_find,tries,win);
+
+#------------------------------------Main programm------------------------------------------#
 
 #Rempli le tableau de mot
 words = [];
@@ -205,5 +239,5 @@ while (play == "Y"):
         
 print("You left the game. Goodbye.")
 
-#Environ 5h de projet incluant la réfléxion, le code et la documentation.
-#11h40
+#Environ 5h35 de projet incluant la réfléxion, le code et la documentation.
+#12h19
