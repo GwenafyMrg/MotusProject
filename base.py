@@ -166,7 +166,7 @@ def start():
         None
     '''
     # word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
-    word_to_find = "attaquer";
+    word_to_find = "marron";
     hiding_word = hide_word(word_to_find);
     user_word = "";
     tries = 0;
@@ -181,19 +181,29 @@ def start():
             hiding_word = compare_word(user_word,word_to_find,hiding_word);
     end_display(word_to_find,tries);
 
-#Rempli le tableau de mot et initialise les tableaux d'états pour les différentes lettres.
+#Rempli le tableau de mot
 words = [];
 with open('frequence.csv', mode='r', encoding='utf-8') as file:
     reader = csv.reader(file, delimiter=";");
 
     for row in reader:
         words.append(row[2]);
-reveal_letters = [];
-wrong_place = [];
-wrong_letters = [];
 
-#Lancement du jeu
-start();
+#Start the first game.
+play = "Y";
+while (play == "Y"):
+    #Initialise les tableaux d'états pour les différentes lettres.
+    reveal_letters = [];
+    wrong_place = [];
+    wrong_letters = [];
+    start();
 
-#Environ 4h40 de projet incluant la réfléxion, le code et la documentation.
-#18h36
+    play = input("Do you want to play again? Y / N: ").strip().upper()
+    while play not in ["Y", "N"]:
+        print("Invalid input. Please enter 'Y' or 'N'.")
+        play = input("Do you want to play again? Y / N: ").strip().upper()
+        
+print("You left the game. Goodbye.")
+
+#Environ 5h de projet incluant la réfléxion, le code et la documentation.
+#11h40
