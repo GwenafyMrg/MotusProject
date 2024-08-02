@@ -19,22 +19,22 @@ def hide_word(word):
         string += "X";
     return string;
 
-def demand_answer(hiding_word):
-    '''
-    Demande un mot à l'utilisateur, tant que celui-ci soit de la même taille que le mot masqué.
-    Le mot est ensuite passé en minuscule.
-    Args :
-        hiding_word(string)     --> mot masqué que l'utilisateur doit retrouver.
-    Return : 
-        user_word(string)       --> mot proposé par l'utilisateur en minuscule.
-    '''
-    user_word = "";
-    while (len(hiding_word) != len(user_word)):
-        #On indique à le nombre de caractère attendu.
-        print("Enter word of", len(hiding_word), "letters.")
-        user_word = str(input("Your proposition : "));
-    user_word = user_word.lower();
-    return user_word;
+# def demand_answer(hiding_word):
+#     '''
+#     Demande un mot à l'utilisateur, tant que celui-ci soit de la même taille que le mot masqué.
+#     Le mot est ensuite passé en minuscule.
+#     Args :
+#         hiding_word(string)     --> mot masqué que l'utilisateur doit retrouver.
+#     Return : 
+#         user_word(string)       --> mot proposé par l'utilisateur en minuscule.
+#     '''
+#     user_word = "";
+#     while (len(hiding_word) != len(user_word)):
+#         #On indique à le nombre de caractère attendu.
+#         print("Enter word of", len(hiding_word), "letters.")
+#         user_word = str(input("Your proposition : "));
+#     user_word = user_word.lower();
+#     return user_word;
 
 def standardize_word(word):
     '''
@@ -115,39 +115,41 @@ def compare_word(proposition, word_to_find, hiding_word):
                     wrong_place.append(letter);
     #Conversion de la liste en chaine de caractères.
     hiding_word = "".join(hiding_word)
-    display(hiding_word);
+    return (hiding_word, reveal_letters, wrong_place, wrong_place);
+
+def getTryLimit(n):
+    global max_tries;
+    if (n == 0): max_tries = None;
+    else: max_tries = n;
+    print(max_tries);
+
+def getHidingWord():
+    global hiding_word;
+    hiding_word = hide_word(word_to_find);
+    print(hiding_word);
     return hiding_word;
 
-# def test(n):
-#     max_tries = n;
-#     print(max_tries);
-
-def start(n):
+def traitment(word, hiding_word):
     '''
     Demande une limite d'essai pour plus de difficulté, Lance la partie ; Pioche un mot parmi une liste, demande un mot à l'utilisateur en 
     vérifiant sa compatibilité avec le jeu, s'arrête et affiche le message de fin une fois que 
     le mot masqué soit entièrement révélé.
     Args :
-        None
-    Return :
-        None
-    '''
-    # start_display();
 
-    # word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
-    word_to_find = "marron";
-    hiding_word = hide_word(word_to_find);
-    user_word = "";
+    Return :
+
+    '''
+
+    user_word = None;
     tries = 0;
 
-    #Demande si le joueur souhaite une limite d'essaies :
-    
-    #Part start
-    if (n == 0): max_tries = None;
-    else: max_tries = n;
-    print(max_tries);
-
-    '''Faire une fonction intermédiaire pour récupérer le max'''
+    if (hiding_word != word_to_find and tries != max_tries):
+        user_word = word;
+        user_word = standardize_word(user_word);
+        if (correct(user_word) == True):
+            tries += 1;
+            hiding_word = compare_word(user_word,word_to_find,hiding_word);
+    return hiding_word;
 
     # while (hiding_word != word_to_find and tries != max_tries):
     #     user_word = None
@@ -164,8 +166,13 @@ def start(n):
     # else:
     #     win = True;
 
-
 #------------------------------------Main programm------------------------------------------#
+
+# word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
+word_to_find = "marron";
+reveal_letters = [];
+wrong_place = [];
+wrong_letters = [];
 
 # #Rempli le tableau de mot
 # words = [];
