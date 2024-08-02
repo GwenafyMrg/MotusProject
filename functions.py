@@ -52,6 +52,8 @@ def standardize_word(word):
             letter == "i";
         if (letter == "ù"):
             letter == "u";
+        if (letter == "ç"):
+            letter == "c";
         standart_word += letter;
     return standart_word;
         
@@ -115,7 +117,7 @@ def compare_word(proposition, word_to_find, hiding_word):
                     wrong_place.append(letter);
     #Conversion de la liste en chaine de caractères.
     hiding_word = "".join(hiding_word)
-    return (hiding_word, reveal_letters, wrong_place, wrong_place);
+    return (hiding_word, reveal_letters, wrong_place, wrong_letters);
 
 def getTryLimit(n):
     global max_tries;

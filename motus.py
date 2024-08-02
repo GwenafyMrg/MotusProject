@@ -12,6 +12,7 @@ def clear_windows():
             widget.destroy();
 
 def save_settings(n):
+    ''''''
     fn.getTryLimit(n);
     game_panel(hiding_word_txt, rl, wp, wl);
 
