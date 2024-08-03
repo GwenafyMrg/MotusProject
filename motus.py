@@ -1,5 +1,10 @@
+#------------------------------------Packages------------------------------------------#
+
 import tkinter as tk
+import tkinter.messagebox as msgBox
 import functions as fn
+
+
 
 root = tk.Tk();
 
@@ -19,16 +24,32 @@ def save_settings(n):
 def update_word(word, hiding_word):
     # print(word);
     # print(hiding_word);
-    infos_traitment = fn.traitment(word, hiding_word);
-    print(infos_traitment);
-    hiding_word_txt = infos_traitment[0];
-    rl = infos_traitment[1];
-    wp = infos_traitment[2];
-    wl = infos_traitment[3];
-    # print(hiding_word_txt);
-    game_panel(hiding_word_txt, rl, wp, wl);
+    if(len(word) != len(hiding_word)):
+        msgBox.showerror("Erreur de Saisie",f"Votre mot doit contenir {len(hiding_word)} lettres.");
+        global rl, wp, wl;
+        game_panel(hiding_word, rl, wp, wl);
+    else:
+        infos_traitment = fn.traitment(word, hiding_word);
+        # print(infos_traitment);
+        hiding_word_txt = infos_traitment[0];
+        rl = infos_traitment[1];
+        wp = infos_traitment[2];
+        wl = infos_traitment[3];
+        # print(hiding_word_txt);
+        result = fn.doYouWin((hiding_word_txt));
+        if (result[0] == None):
+            game_panel(hiding_word_txt, rl, wp, wl);
+        else:
+            end_panel(result);
 
-#-------------------------------------MANAGE PANEL---------------------------------#
+def new_game():
+    empty_list = fn.clear_data();
+    rl = empty_list[0];
+    wp = empty_list[1];
+    wl = empty_list[2];
+    settings_panel();
+
+#-------------------------------------Functions to manage panel---------------------------------#
 
 def settings_panel():
 
@@ -96,7 +117,7 @@ def game_panel(hiding_word, rl, wp, wl):
     txt = tk.Label(frProp, text="Entrer votre proposition de mot :", bg="#66B2FF", fg="white");
     proposition = tk.Text(frProp, width=20 ,height=1);
     submit = tk.Button(frProp, text="Valider",command=lambda : update_word(proposition.get("1.0", tk.END).strip(), hiding_word));
-    stop = tk.Button(frProp, text="Quitter",command=end_panel);
+    stop = tk.Button(frProp, text="Quitter",command=root.destroy);
 
     #Print Widgets.
     title.pack(pady=20);
@@ -109,12 +130,13 @@ def game_panel(hiding_word, rl, wp, wl):
     submit.grid(column=1, row=1, padx=5);
     stop.grid(column=1, row=0, padx=5);
 
-def end_panel():
+def end_panel(result):
 
     clear_windows();
-    congratTxt = tk.Label(root, text="Ok", bg='white', width=100, height=10, bd=5, relief="groove");
+    congratTxt = tk.Label(root, text=result[1], bg='white', width=100, height=10, bd=5, relief="groove");
+    
     frButton = tk.Frame(root, bg='#66B2FF');
-    restart = tk.Button(frButton, text="Rejouer", command=settings_panel, width=8, height=2);
+    restart = tk.Button(frButton, text="Rejouer", command=new_game, width=8, height=2);
     stop = tk.Button(frButton, text="Quitter", command=root.destroy, width=8, height=2);
 
     #Print Widgets:
@@ -125,11 +147,11 @@ def end_panel():
     restart.grid(column=0, row=0, pady=5, padx=15);
     stop.grid(column=1, row=0, pady=5, padx=15);
 
+#------------------------------------Initialization Global Variables------------------------------------------#
 
 root.title("Motus Game");
 root.config(bg='#66B2FF', bd=5 , relief="solid");
 
-#Global Variables:
 title = tk.Label(root, text="Panel", height=3, width=50, bg="#3399FF" ,fg='white', font=("Arial",20)
                 , bd= 5, relief="raised");
 hiding_word_txt = fn.getHidingWord();
@@ -137,10 +159,11 @@ rl = [];
 wp = [];
 wl = [];
 
-
 settings_panel();
 root.mainloop();
 
 #2H30 pour tkinter
-#1H pour fusion
-#19h00
+#2H45 pour fusion
+#10h30
+
+'''Documenter les fonctions, ajouter des explications à l'intérieur et réorganiser le code.'''
