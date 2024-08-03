@@ -3,7 +3,7 @@
 import csv
 import random
 
-#------------------------------------Functions------------------------------------------#
+#------------------------------------Traitment Functions------------------------------------------#
 
 def hide_word(word):
     '''
@@ -19,23 +19,6 @@ def hide_word(word):
         string += "X";
     return string;
 
-# def demand_answer(hiding_word):
-#     '''
-#     Demande un mot à l'utilisateur, tant que celui-ci soit de la même taille que le mot masqué.
-#     Le mot est ensuite passé en minuscule.
-#     Args :
-#         hiding_word(string)     --> mot masqué que l'utilisateur doit retrouver.
-#     Return : 
-#         user_word(string)       --> mot proposé par l'utilisateur en minuscule.
-#     '''
-#     user_word = "";
-#     while (len(hiding_word) != len(user_word)):
-#         #On indique à le nombre de caractère attendu.
-#         print("Enter word of", len(hiding_word), "letters.")
-#         user_word = str(input("Your proposition : "));
-#     user_word = user_word.lower();
-#     return user_word;
-
 def standardize_word(word):
     '''
     Modifie le mot afin de supprimer les caractères accentués.
@@ -49,11 +32,11 @@ def standardize_word(word):
         if (letter == "é" or letter == "è" or letter == "ê"):
             letter = "e";
         if (letter == "ï"):
-            letter == "i";
+            letter = "i";
         if (letter == "ù"):
-            letter == "u";
+            letter = "u";
         if (letter == "ç"):
-            letter == "c";
+            letter = "c";
         standart_word += letter;
     return standart_word;
         
@@ -119,31 +102,19 @@ def compare_word(proposition, word_to_find, hiding_word):
     hiding_word = "".join(hiding_word)
     return (hiding_word, reveal_letters, wrong_place, wrong_letters);
 
-def getTryLimit(n):
-    global max_tries;
-    if (n == 0): max_tries = None;
-    else: max_tries = n;
-    print(max_tries);
-
-def getHidingWord():
-    global hiding_word;
-    hiding_word = hide_word(word_to_find);
-    print(hiding_word);
-    return hiding_word;
-
 def traitment(word, hiding_word):
     '''
-    Demande une limite d'essai pour plus de difficulté, Lance la partie ; Pioche un mot parmi une liste, demande un mot à l'utilisateur en 
-    vérifiant sa compatibilité avec le jeu, s'arrête et affiche le message de fin une fois que 
-    le mot masqué soit entièrement révélé.
+    Vérifie la conformité de la proposition et passe celle-ci dans un format standart.
+    Puis compare la proposition avec le mot caché.
     Args :
-
+        word(string)                --> la proposition du joueur.
+        hiding_word(string)         --> le mot caché à trouver.
     Return :
-
+        hiding_word(string)         --> le mot caché après la comparasion avec la proposition.
     '''
 
     user_word = None;
-    tries = 0;
+    global tries;
 
     if (hiding_word != word_to_find and tries != max_tries):
         user_word = word;
@@ -153,48 +124,94 @@ def traitment(word, hiding_word):
             hiding_word = compare_word(user_word,word_to_find,hiding_word);
     return hiding_word;
 
-    # while (hiding_word != word_to_find and tries != max_tries):
-    #     user_word = None
-    #     user_word = standardize_word(user_word);
-    #     if (correct(user_word) == False):
-    #         print("Your proposition is incorrect.");
-    #     else : 
-    #         tries += 1;
-    #         hiding_word = compare_word(user_word,word_to_find,hiding_word);
-    # #Si le mot n'a pas été trouvé et que le nombre d'essaies est atteint.
-    # if (hiding_word != word_to_find and tries == max_tries):
-    #     win = False;
-    # #Si le mot a été trouvé sur le dernier essai.
-    # else:
-    #     win = True;
+#------------------------------------Functions for the Interface ------------------------------------------#
+
+def getTryLimit(n):
+    '''
+    Récupère et enregistre la limite d'essai.
+    Args :
+        n(int)              --> limite d'essai.
+    Return :
+        None
+    '''
+    global max_tries;
+    if (n == 0): max_tries = None;
+    else: max_tries = n;
+
+def getHidingWord():
+    '''
+    Traduit le mot à trouver en mot caché et le retourne.
+    Args :
+        None
+    Return :
+        hiding_word(string)         --> le mot masqué.
+    '''
+    global hiding_word;
+    hiding_word = hide_word(word_to_find);
+    return hiding_word;
+
+def reset_data():
+    '''
+    Vide les listes contenant les lettres traitées ainsi que la limite d'essai.
+    Et séléctionne un autre mot au hasard.
+    Args :
+        None
+    Return :
+        tuple               --> contient le nouveau mot à trouver et les listes de traitement de lettres.
+    '''
+    global tries;
+    global word_to_find;
+    tries = 0;
+    word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
+    reveal_letters.clear();
+    wrong_place.clear();
+    wrong_letters.clear();
+    return (word_to_find, reveal_letters, wrong_place, wrong_letters);
+
+def doYouWin(hiding_word):
+    '''
+    Vérifie si le jeu est gagné, perdu ou encore en cours selon le mot caché et le nombre d'essai réalisés.
+    Args :
+        hiding_word(string)         --> le mot caché.
+    Return :
+        result(bool)                --> True, le jeu est gagné.
+                                    --> False, le jeu est perdu.
+                                    --> None, le jeu est encore en cours.
+    '''
+
+    result = [None, ""];
+    #Without try limit:
+    if (max_tries == None):
+        #If the hiding word is find.
+        if (hiding_word == word_to_find):
+            result[0] = True;
+            result[1] = f"Congratulations ! You found the word {word_to_find}. \n You took {tries} tries to success.";
+    #With try limit:
+    else :
+        #If there are too many tries.
+        if (hiding_word != word_to_find and tries >= max_tries):
+            result[0] = False;
+            result[1] = f"Too bad ! You didn't find the word '{word_to_find}'... Vous avez proposez trop de mots sans succes.";
+        #If the hiding word is find.
+        elif (hiding_word == word_to_find and tries < max_tries):
+            result[0] = True;
+            result[1] = f"Congratulations ! You found the word {word_to_find}. \n You took {tries} tries to success.";
+    return result;
 
 #------------------------------------Main programm------------------------------------------#
 
-# word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
-word_to_find = "marron";
+#Rempli le tableau de mot:
+words = [];
+with open('frequence.csv', mode='r', encoding='utf-8') as file:
+    reader = csv.reader(file, delimiter=";");
+
+    for row in reader:
+        words.append(row[2]);
+
+#------------------------------Initializing Globales Variables----------------------------#
+word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
+hiding_word = "";
+tries = 0;
 reveal_letters = [];
 wrong_place = [];
 wrong_letters = [];
-
-# #Rempli le tableau de mot
-# words = [];
-# with open('frequence.csv', mode='r', encoding='utf-8') as file:
-#     reader = csv.reader(file, delimiter=";");
-
-#     for row in reader:
-#         words.append(row[2]);
-
-# #Start the first game.
-# play = "Y";
-# while (play == "Y"):
-#     #Initialise les tableaux d'états pour les différentes lettres.
-#     reveal_letters = [];
-#     wrong_place = [];
-#     wrong_letters = [];
-#     start();
-
-#     play = input("* Do you want to play again? Y / N: ").strip().upper()
-#     while play not in ["Y", "N"]:
-#         print("Invalid input. Please enter 'Y' or 'N'.")
-#         play = input("* Do you want to play again? Y / N: ").strip().upper()
-        
