@@ -104,13 +104,13 @@ def compare_word(proposition, word_to_find, hiding_word):
 
 def traitment(word, hiding_word):
     '''
-    Demande une limite d'essai pour plus de difficulté, Lance la partie ; Pioche un mot parmi une liste, demande un mot à l'utilisateur en 
-    vérifiant sa compatibilité avec le jeu, s'arrête et affiche le message de fin une fois que 
-    le mot masqué soit entièrement révélé.
+    Vérifie la conformité de la proposition et passe celle-ci dans un format standart.
+    Puis compare la proposition avec le mot caché.
     Args :
-
+        word(string)                --> la proposition du joueur.
+        hiding_word(string)         --> le mot caché à trouver.
     Return :
-
+        hiding_word(string)         --> le mot caché après la comparasion avec la proposition.
     '''
 
     user_word = None;
@@ -127,41 +127,72 @@ def traitment(word, hiding_word):
 #------------------------------------Functions for the Interface ------------------------------------------#
 
 def getTryLimit(n):
-    ''''''
+    '''
+    Récupère et enregistre la limite d'essai.
+    Args :
+        n(int)              --> limite d'essai.
+    Return :
+        None
+    '''
     global max_tries;
     if (n == 0): max_tries = None;
     else: max_tries = n;
-    # print(max_tries);
 
 def getHidingWord():
-    ''''''
+    '''
+    Traduit le mot à trouver en mot caché et le retourne.
+    Args :
+        None
+    Return :
+        hiding_word(string)         --> le mot masqué.
+    '''
+    global hiding_word;
     hiding_word = hide_word(word_to_find);
     return hiding_word;
 
-def clear_data():
-    ''''''
+def reset_data():
+    '''
+    Vide les listes contenant les lettres traitées ainsi que la limite d'essai.
+    Et séléctionne un autre mot au hasard.
+    Args :
+        None
+    Return :
+        tuple               --> contient le nouveau mot à trouver et les listes de traitement de lettres.
+    '''
     global tries;
+    global word_to_find;
     tries = 0;
+    word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
     reveal_letters.clear();
     wrong_place.clear();
     wrong_letters.clear();
-    return (reveal_letters, wrong_place, wrong_letters);
+    return (word_to_find, reveal_letters, wrong_place, wrong_letters);
 
 def doYouWin(hiding_word):
+    '''
+    Vérifie si le jeu est gagné, perdu ou encore en cours selon le mot caché et le nombre d'essai réalisés.
+    Args :
+        hiding_word(string)         --> le mot caché.
+    Return :
+        result(bool)                --> True, le jeu est gagné.
+                                    --> False, le jeu est perdu.
+                                    --> None, le jeu est encore en cours.
+    '''
 
-    # print("doYouWin");
-    # print(hiding_word);
-    # print(f"max{max_tries}");
-    # print(f"tries{tries}");
     result = [None, ""];
+    #Without try limit:
     if (max_tries == None):
+        #If the hiding word is find.
         if (hiding_word == word_to_find):
             result[0] = True;
             result[1] = f"Congratulations ! You found the word {word_to_find}. \n You took {tries} tries to success.";
+    #With try limit:
     else :
+        #If there are too many tries.
         if (hiding_word != word_to_find and tries >= max_tries):
             result[0] = False;
-            result[1] = f"Too bad ! You didn't find the word {word_to_find}... Vous avez proposez trop de mots sans succes.";
+            result[1] = f"Too bad ! You didn't find the word '{word_to_find}'... Vous avez proposez trop de mots sans succes.";
+        #If the hiding word is find.
         elif (hiding_word == word_to_find and tries < max_tries):
             result[0] = True;
             result[1] = f"Congratulations ! You found the word {word_to_find}. \n You took {tries} tries to success.";
@@ -169,21 +200,18 @@ def doYouWin(hiding_word):
 
 #------------------------------------Main programm------------------------------------------#
 
-# #Rempli le tableau de mot:
-# words = [];
-# with open('frequence.csv', mode='r', encoding='utf-8') as file:
-#     reader = csv.reader(file, delimiter=";");
+#Rempli le tableau de mot:
+words = [];
+with open('frequence.csv', mode='r', encoding='utf-8') as file:
+    reader = csv.reader(file, delimiter=";");
 
-#     for row in reader:
-#         words.append(row[2]);
+    for row in reader:
+        words.append(row[2]);
 
-#Initialise les variables globales:
-# word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
-word_to_find = "marron";
+#------------------------------Initializing Globales Variables----------------------------#
+word_to_find = standardize_word(words[random.randint(0,len(words)-1)]);
 hiding_word = "";
 tries = 0;
 reveal_letters = [];
 wrong_place = [];
 wrong_letters = [];
-
-'''Gérer le restart avec le nouveau mot, documenter et expliquer les fonctions'''     
